@@ -62,8 +62,6 @@ def simulate_data(L, p, n, dropout, batch_num):
         number of biclusters
     p
         number of measurements(genes)
-    p
-        number of measurements(genes)
     n
         number of objects(cells)
     dropout
@@ -132,4 +130,5 @@ def simulate_data(L, p, n, dropout, batch_num):
             X[:, j] += i * m
             X[np.intersect1d(np.where(binomial(1, dropout, p))[0],np.where(X[:, j] < 0)[0]), j] = 0
 
-    return {'W': W, 'Z': Z, 'X': X, 'S': S, 'edge': edge}
+    dat = ad.AnnData(X.T)
+    return {'W': W, 'Z': Z, 'dat': dat, 'S': S, 'edge': edge}

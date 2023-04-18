@@ -17,12 +17,11 @@ class scBC:
                  labels_key: Optional[str] = None,
                  size_factor_key: Optional[str] = None,
                  categorical_covariate_keys: Optional[List[str]] = None,
-                 continuous_covariate_keys: Optional[List[str]] = None,
-                 edge: DataFrame = None) -> None:
+                 continuous_covariate_keys: Optional[List[str]] = None) -> None:
         '''
         Parameters
         -----------
-        adata:       AnnData object with observed p * n matrix, p is the number of measurements and n is the number of subjects.  
+        adata:       AnnData object with an observed n * p matrix, p is the number of measurements and n is the number of subjects.  
         layer:       if not None, uses this as the key in adata.layers for raw count data.
         batch_key:    key in adata.obs for batch information. Categories will automatically be converted into integer categories and
                       saved to adata.obs['_scvi_batch']. If None, assigns the same batch to all the data.
