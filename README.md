@@ -11,6 +11,7 @@ This document will help you easily go through the scBC model.
 To install our package, run
 
 ```bash
+conda install -c conda-forge scvi-tools #pip install scvi-tools
 pip install scBC
 ```
 
@@ -24,6 +25,8 @@ To simply illustrate how one can run our scBC model, here we use the subsampled 
 from scBC import data
 heart = data.load_data("HEART")
 ```
+
+If you can't download the data automatically, you can also download them manually from our [repository](https://github.com/GYQ-form/scBC/tree/main/data) and place them in your working directory.
 
 Now you are ready to set up the scBC model:
 
@@ -43,7 +46,7 @@ my_model.train_VI()
 Then we can get the reconstructed data, we use 10 posterior samples to estimate the mean expression:
 
 ```python
-my_model.get_reconst_data(n_sample=10)
+my_model.get_reconst_data(n_samples=10)
 ```
 
 Since scBC encourage prior information about genes' co-expression to be provided,  before conducting biclustering, we first generate a prior edge. Thankfully, we have also provide an API for automatically generating prior edge from biomart database, just run with default setting:

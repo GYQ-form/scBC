@@ -87,7 +87,7 @@ class scBC:
         server = BiomartServer("http://www.ensembl.org/biomart")
 
         # Connect to the biomart server and select the dataset
-        mart = server.datasets['hsapiens_gene_ensembl']
+        mart = server.datasets[dataset]
         filters = {"hgnc_symbol": genes}
         attributes = ["go_id", "hgnc_symbol"]
         response = mart.search({'attributes':attributes, 'filters':filters})
@@ -113,8 +113,8 @@ class scBC:
         # Select random pathways and add edges between genes in the pathway
         for i in range(intensity):
             path_id = np.random.choice(path_num.index)
-            p = pathway[pathway["go-id"] == path_id]
-            path = np.where(np.isin(topgene, p["gene"]))[0]
+            p = pathway[pathway["go_id"] == path_id]
+            path = np.where(np.isin(genes, p["gene"]))[0]
             if np.intersect1d(pool, path).size:
                 continue
             pool = np.concatenate((pool, path))
