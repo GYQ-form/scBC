@@ -49,6 +49,7 @@ class scBC:
                            categorical_covariate_keys=categorical_covariate_keys, 
                            continuous_covariate_keys=continuous_covariate_keys)
         
+        self.edge = None
         self.vi_model = None
         self.reconst_data = None
         self.W = None
