@@ -16,7 +16,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        'scvi-tools',
+        'scvi-tools>=0.19.0',
         'biomart',
         "requests",
         "scipy"
