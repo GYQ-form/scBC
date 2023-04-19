@@ -81,13 +81,27 @@ Here we give some parameter lists for readers to use flexibly:
 #### scBC.model.scBC()
 
 - **adata**:    *AnnData object with an observed n $\times$ p matrix, p is the number of measurements and n is the number of subjects.*  
-
 - **layer**:    *if not None, uses this as the key in adata.layers for raw count data.*
 - **batch_key**:     *key in adata.obs for batch information. Categories will automatically be converted into integer categories and saved to adata.obs['_scvi_batch']. If None, assigns the same batch to all the data.* 
 - **labels_key**:    *key in adata.obs for label information. Categories will automatically be converted into integer categories and saved to adata.obs['_scvi_labels']. If None, assigns the same label to all the data.*
 - **size_factor_key**:    *key in adata.obs for size factor information. Instead of using library size as a size factor, the provided size factor column will be used as offset in the mean of the likelihood. Assumed to be on linear scale.*
 - **categorical_covariate_keys**:    *keys in adata.obs that correspond to categorical data. These covariates can be added in addition to the batch covariate and are also treated as nuisance factors (i.e., the model tries to minimize their effects  on the latent space). Thus, these should not be used for biologically-relevant factors that you do not want to correct for.*
 - **continuous_covariate_keys**:  *keys in adata.obs that correspond to continuous data. These covariates can be added in addition to the batch covariate and are also treated as nuisance factors (i.e., the model tries to minimize their effects on the latent space).  Thus, these should not be used for biologically-relevant factors that you do not want to correct for.*
+
+#### Attributes
+
+- `self.adata` - The AnnData used when initializing the scBC object.
+- `self.p` - Number of  measurements(genes) of the expression matrix
+- `self.n` - Number of  subjects(cells) of the expression matrx
+- `self.vi_model` - The scvi model
+- `self.reconst_data` - Reconstructed expression matrix with n $\times$ p
+- `self.W` - **W** matrix after biclustering
+- `self.Z` - **Z** matrix after biclustering
+- `self.mu` - Parameter matrix $\pmb\mu$ after biclustering
+- `self.convg_trail` - The converge trail of biclustering process (likelihood value)
+- `self.S` - A list containing L dictionaries. The $i_{th}$ dictionary is the $i_{th}$ bicluster's results  
+- `self.niter` - Iteration time during biclustering
+- `self.edge` - The prior edge array
 
 ---
 
@@ -115,7 +129,7 @@ Here we give some parameter lists for readers to use flexibly:
   -  ``'ln'`` - Logistic normal distribution (Normal(0, I) transformed by softmax)
 
 - **max_epochs**:    Number of passes through the dataset. If `None`, defaults to `np.min([round((20000 / n_cells) * 400), 400])`
-- **use_gpu**:    Use default GPU if available (if None or True), or index of GPU to use (if int), or name of GPU (if str, e.g., `'cuda:0'`), or use CPU (if False).
+- **use_gpu**:    Use default GPU if available (if None or True), or index of GPU to use (if int), or name of GPU (if `str`, e.g., `'cuda:0'`), or use CPU (if False).
 - **batch_size**:    Minibatch size to use during training.
 - **early_stopping**:    Perform early stopping.
 
@@ -167,6 +181,19 @@ We also provide an API for simulation in scBC.data:
 - **dropout**:    dropout rate (between 0 and 1)
 - **batch_num**:    number of batches you want to simulate
 
+#### return value
+
+A dictionary containing several simulation results:
+
+| key  |                         word                         |
+| :--: | :--------------------------------------------------: |
+|  W   |                   The **W** matrix                   |
+|  Z   |                   The **Z** matrix                   |
+| dat  | AnnData object with expression matrix (n $\times$ p) |
+|  S   |               The ground truth result                |
+| edge |         Randomly generated prior edge array          |
+
 During simulation, the scale of the FGM increases adaptively with the size of the simulated dataset (actually the size of p). The parameter $\pmb\mu$ is computed by the multiplicative model $\pmb\mu = \pmb{WZ}$, where **W** is a p×L matrix and **Z** is an L×n matrix. The number of non-zero elements in each column of **W** is set as p/20, and the number of non-zero elements in each row of **Z** is set as n/10. The row indices of non-zero elements in **W** and the column indices of **Z** with non-zero elements are randomly drawn from 1 to p and 1 to n. The nonzero element values for both **W** and **Z** are generated from a normal distribution with mean 1.5 and standard deviation 0.1, and are randomly assigned to be positive or negative. The prior edge is generated along with W. When generating **X**, each element is generated from $NB(r_j,\frac1{1+e^{-\mu_{ij}}})$ , and the parameter   is randomly drawn from 5 to 20. Finally, in order to simulate different batches, we divided the dataset into `batch_num` parts, each with different intensities of noise. The implementation of dropout is to perform Bernoulli censoring at each data point according to the given dropout rate parameter. The simulation data generation process is shown as follows.
+
 
 ![simulation](https://user-images.githubusercontent.com/79566479/232784233-e0a07e0e-bbc3-449c-91b6-5e0936d48159.png)
