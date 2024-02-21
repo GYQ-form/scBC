@@ -89,14 +89,16 @@ class scBC:
 
         # Connect to the biomart server and select the dataset
         mart = server.datasets[dataset]
-        filters = {"hgnc_symbol": genes}
-        attributes = ["go_id", "hgnc_symbol"]
-        response = mart.search({'attributes':attributes, 'filters':filters})
-
         pathway = []
-        for line in response.iter_lines():
-            line = line.decode('utf-8')
-            pathway.append(line.split("\t"))
+        gene_idx = 0
+        while gene_idx < len(genes):
+            filters = {"hgnc_symbol": genes[gene_idx:gene_idx+800]}
+            attributes = ["go_id", "hgnc_symbol"]
+            response = mart.search({'attributes':attributes, 'filters':filters})
+            for line in response.iter_lines():
+                line = line.decode('utf-8')
+                pathway.append(line.split("\t"))
+            gene_idx += 800
 
         pathway = DataFrame(data=pathway, columns=['go_id','gene'])
 
@@ -260,7 +262,7 @@ class scBC:
         b_omega = 1
 
         ## initialize Omega
-        if use_edge:
+        if use_edge is not None:
             Omega = np.zeros((self.p, self.p))
             for i in range(use_edge.shape[0]):
                 if use_edge[i,0] != use_edge[i,1]:
