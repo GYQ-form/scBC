@@ -3,6 +3,8 @@
 scBC —— a single-cell transcriptome Bayesian biClustering framework. 
 
 This document will help you easily go through the scBC model.
+
+
 ![fig1_00](https://github.com/GYQ-form/scBC/assets/79566479/a3a7a6a6-aebd-42dc-85dc-806ecfb54cb9)
 
 
