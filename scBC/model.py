@@ -133,7 +133,7 @@ class scBC:
 
     def train_VI(self, n_hidden=128, n_latent=10, n_layers=1, dropout_rate=0.1, 
                  dispersion='gene', gene_likelihood='zinb', latent_distribution='normal',
-                 max_epochs=None, use_gpu=None, batch_size=128, early_stopping=False):
+                 max_epochs=None, accelerator='auto', devices='auto', batch_size=128, early_stopping=False):
         '''
         Parameters
         ----------
@@ -163,9 +163,13 @@ class scBC:
         max_epochs
             Number of passes through the dataset. If `None`, defaults to
             `np.min([round((20000 / n_cells) * 400), 400])`
-        use_gpu
-            Use default GPU if available (if None or True), or index of GPU to use (if int),
-            or name of GPU (if str, e.g., `'cuda:0'`), or use CPU (if False).
+        accelerator
+            Supports passing different accelerator types (“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”)
+            as well as custom accelerator instances.
+        devices 
+            The devices to use. Can be set to a non-negative index (int or str), a sequence of device indices (list or comma-separated str), 
+            the value -1 to indicate all available devices, or “auto” for automatic selection based on the chosen accelerator. 
+            If set to “auto” and accelerator is not determined to be “cpu”, then devices will be set to the first available device.
         batch_size
             Minibatch size to use during training.
         early_stopping
@@ -175,7 +179,7 @@ class scBC:
         self.vi_model = SCVI(adata = self.adata, n_hidden=n_hidden, n_latent=n_latent, n_layers=n_layers, dropout_rate=dropout_rate, 
                  dispersion=dispersion, gene_likelihood=gene_likelihood, latent_distribution=latent_distribution)
         
-        self.vi_model.train(max_epochs=max_epochs, use_gpu=use_gpu, batch_size=batch_size, early_stopping=early_stopping)
+        self.vi_model.train(max_epochs=max_epochs, accelerator=accelerator, devices=devices, batch_size=batch_size, early_stopping=early_stopping)
 
 
     def get_reconst_data(
