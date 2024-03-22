@@ -203,3 +203,8 @@ During simulation, the scale of the FGM increases adaptively with the size of th
 
 
 ![simulation](https://user-images.githubusercontent.com/79566479/232784233-e0a07e0e-bbc3-449c-91b6-5e0936d48159.png)
+
+
+## Citation
+
+Gong et al, Single-cell biclustering for cell-specific transcniptomic perurbation detection in AD progression, Cell Reports Methods (2024), https://doi.org/10.1016/j.crmeth.2024.100742
